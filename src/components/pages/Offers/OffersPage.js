@@ -1,19 +1,19 @@
 import React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
 
-function SettingsPage() {
+function OffersPage() {
   return (
     <Box sx={{ flexGrow: 1, p: 3 }}>
       <Paper sx={{ p: 2 }}>
         <Typography variant="h5" gutterBottom>
-          Settings
+          Offers & Coupons
         </Typography>
         <Typography variant="body1">
-          Manage your application settings here.
+          Manage your offers and coupons here.
         </Typography>
       </Paper>
     </Box>
   );
 }
 
-export default SettingsPage; 
+export default OffersPage; 

@@ -1,19 +1,19 @@
 import React from 'react';
 import { Box, Typography, Paper } from '@mui/material';
 
-function OrderAcceptedPage() {
+function DashboardPage() {
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1, p: 3 }}>
       <Paper sx={{ p: 2 }}>
         <Typography variant="h5" gutterBottom>
-          Order Accepted
+          Dashboard
         </Typography>
         <Typography variant="body1">
-          View all accepted orders here.
+          Manage your dashboard here.
         </Typography>
       </Paper>
     </Box>
   );
 }
 
-export default OrderAcceptedPage; 
+export default DashboardPage; 

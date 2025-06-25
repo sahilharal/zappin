@@ -16,7 +16,7 @@ function Navbar({ onToggleSidebar }) {
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap component="div">
-          Zaapin Dashboard
+          Zaapin Admin
         </Typography>
       </Toolbar>
     </AppBar>
