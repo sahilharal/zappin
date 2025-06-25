@@ -16,32 +16,8 @@ function OffersPage() {
   });
 
   const [imageFile, setImageFile] = useState(null);
-  const [offers, setOffers] = useState([
-    // {
-    //   couponCode: 'Abcodetech1234',
-    //   percentage: '75%',
-    //   description: 'xyz',
-    //   expiryDate: '0001-11-30',
-    //   status: 'inactive',
-    //   image: ''
-    // },
-    // {
-    //   couponCode: 'Off20',
-    //   percentage: '20%',
-    //   description: 'THis is 20% off code',
-    //   expiryDate: '2023-11-30',
-    //   status: 'active',
-    //   image: 'https://via.placeholder.com/150x100?text=Offer+Image'
-    // },
-    // {
-    //   couponCode: 'Off10',
-    //   percentage: '10%',
-    //   description: 'This is 10% off code',
-    //   expiryDate: '2023-11-30',
-    //   status: 'active',
-    //   image: 'https://via.placeholder.com/150x100?text=Offer+Image'
-    // }
-  ]);
+  const [offers, setOffers] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,7 +35,16 @@ function OffersPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setOffers([...offers, form]);
+    const newOffers = [...offers];
+
+    if (editIndex !== null) {
+      newOffers[editIndex] = form;
+      setOffers(newOffers);
+      setEditIndex(null);
+    } else {
+      setOffers([...offers, form]);
+    }
+
     setForm({
       couponCode: '',
       percentage: '',
@@ -71,25 +56,35 @@ function OffersPage() {
     setImageFile(null);
   };
 
+  const handleEdit = (index) => {
+    setForm(offers[index]);
+    setEditIndex(index);
+  };
+
+  const handleDelete = (index) => {
+    const newOffers = offers.filter((_, i) => i !== index);
+    setOffers(newOffers);
+  };
+
   return (
-    <Box sx={{ flexGrow: 1, p: 3 }}>
-      <Typography variant="h5" gutterBottom>
+    <Box sx={{ flexGrow: 1, p: { xs: 1, sm: 2, md: 3 } }}>
+      <Typography variant="h5" gutterBottom textAlign="center">
         Offers & Coupons
       </Typography>
 
       <Grid container spacing={3}>
-        {/* Add New Offer */}
+        {/* Form Section */}
         <Grid item xs={12} md={4}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>Add New Offer</Typography>
+          <Paper sx={{ p: { xs: 2, sm: 3 } }}>
+            <Typography variant="h6" gutterBottom>{editIndex !== null ? 'Edit Offer' : 'Add New Offer'}</Typography>
             <form onSubmit={handleSubmit}>
               <TextField
                 fullWidth
-                label="Enter Coupon Code" 
+                label="Enter Coupon Code"
                 name="couponCode"
                 value={form.couponCode}
                 onChange={handleChange}
-                margin="normal"
+                margin="dense"
               />
               <TextField
                 fullWidth
@@ -98,7 +93,7 @@ function OffersPage() {
                 value={form.percentage}
                 onChange={handleChange}
                 type="number"
-                margin="normal"
+                margin="dense"
                 InputProps={{
                   endAdornment: <span>%</span>,
                 }}
@@ -109,7 +104,7 @@ function OffersPage() {
                 name="description"
                 value={form.description}
                 onChange={handleChange}
-                margin="normal"
+                margin="dense"
               />
               <TextField
                 fullWidth
@@ -117,10 +112,10 @@ function OffersPage() {
                 name="expiryDate"
                 value={form.expiryDate}
                 onChange={handleChange}
-                margin="normal"
+                margin="dense"
                 InputLabelProps={{ shrink: true }}
               />
-              <FormControl fullWidth margin="normal">
+              <FormControl fullWidth margin="dense">
                 <InputLabel>Status</InputLabel>
                 <Select
                   name="status"
@@ -136,7 +131,7 @@ function OffersPage() {
                 variant="contained"
                 component="label"
                 fullWidth
-                sx={{ mt: 2 }}
+                sx={{ mt: 1 }}
               >
                 Upload Offer Photo
                 <input
@@ -153,18 +148,18 @@ function OffersPage() {
                 fullWidth
                 sx={{ mt: 2 }}
               >
-                Submit
+                {editIndex !== null ? 'Update Offer' : 'Submit'}
               </Button>
             </form>
           </Paper>
         </Grid>
 
-        {/* Offer List */}
+        {/* Offers Table */}
         <Grid item xs={12} md={8}>
-          <Paper sx={{ p: 2 }}>
+          <Paper sx={{ p: { xs: 2, sm: 3 } }}>
             <Typography variant="h6" gutterBottom>List of Offers</Typography>
-            <TableContainer>
-              <Table>
+            <TableContainer sx={{ maxHeight: 400, overflowX: 'auto' }}>
+              <Table size="small" stickyHeader>
                 <TableHead>
                   <TableRow>
                     <TableCell>Image</TableCell>
@@ -172,6 +167,7 @@ function OffersPage() {
                     <TableCell>Percentage</TableCell>
                     <TableCell>Description</TableCell>
                     <TableCell>Status</TableCell>
+                    <TableCell>Action</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -179,24 +175,49 @@ function OffersPage() {
                     <TableRow key={index}>
                       <TableCell>
                         {offer.image ? (
-                          <img src={offer.image} alt="Offer" width="100" />
+                          <img src={offer.image} alt="Offer" width="80" />
                         ) : (
-                          <Typography color="textSecondary">Image Not Available</Typography>
+                          <Typography color="textSecondary" fontSize="small">No Image</Typography>
                         )}
-                        <Typography variant="caption" color="error">
-                          Expiry: {new Date(offer.expiryDate).toLocaleDateString(undefined, {
+                        <Typography variant="caption" display="block" color="error">
+                          {new Date(offer.expiryDate).toLocaleDateString(undefined, {
                             year: 'numeric',
-                            month: 'long',
+                            month: 'short',
                             day: 'numeric'
                           })}
                         </Typography>
                       </TableCell>
                       <TableCell>{offer.couponCode}</TableCell>
-                      <TableCell>{offer.percentage}</TableCell>
+                      <TableCell>{offer.percentage}%</TableCell>
                       <TableCell>{offer.description}</TableCell>
                       <TableCell>{offer.status}</TableCell>
+                      <TableCell>
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => handleEdit(index)}
+                          sx={{ mb: 0.5 }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="small"
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleDelete(index)}
+                        >
+                          Delete
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
+                  {offers.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        No offers available.
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </TableContainer>
